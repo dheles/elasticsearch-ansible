@@ -1,0 +1,11 @@
+# dev (vagrant):
+# ------------------
+[elasticsearch]
+elasticsearch.test.dev
+
+#[db]
+#db.test.dev
+
+[dev:children]
+elasticsearch
+#db

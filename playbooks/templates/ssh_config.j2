@@ -1,0 +1,10 @@
+Host {{ ansible_fqdn }} {{ ansible_hostname }}
+	Hostname {{ ansible_fqdn }}
+	User {{ login_user }}
+	IdentityFile ~/.ssh/{{ hostvars[inventory_hostname]['login_user_key'] }}
+	PreferredAuthentications publickey
+	IdentitiesOnly yes
+{% if hostvars[inventory_hostname]['environ'] == 'dev'  %}
+	StrictHostKeyChecking no
+	UserKnownHostsFile=/dev/null
+{% endif %}

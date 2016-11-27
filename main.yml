@@ -1,0 +1,4 @@
+---
+- include: playbooks/automation_setup.yml
+- include: playbooks/secure.yml
+- include: playbooks/elasticsearch.yml
