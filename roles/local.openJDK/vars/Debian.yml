@@ -1,0 +1,2 @@
+---
+package: "openjdk-{{ java_version }}-{% if jdk %}jdk{% else %}jre-headless{% endif %}"

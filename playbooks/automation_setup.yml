@@ -1,5 +1,4 @@
 ---
-# TODO: handle OSes other than CentOS
 # TODO: consider removing temp files on success
 
 # NOTE: this is only useful in an environment were we begin with VMs
@@ -44,8 +43,14 @@
     debug: var=facts
 
   # NOTE: need this before working with sudoers file, if SELinux is enforcing
-  - name: install SELinux management libraries
+  - name: install SELinux management libraries for RedHat family
     yum: name=libselinux-python state=present
+    when: ansible_os_family == 'RedHat'
+
+  - name: install SELinux management libraries for Debian family
+    apt: name=python-selinux state=present
+    when: ansible_os_family == 'Debian'
+    become: true
 
   - name: add login user
     user:

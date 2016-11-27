@@ -1,0 +1,9 @@
+---
+- name: ensure jessie-backports is present
+  become: true
+  apt_repository: repo="deb http://ftp.debian.org/debian/ jessie-backports main" state=present update_cache=yes
+  when: ansible_distribution_release == 'jessie'
+
+- name: install OpenJDK
+  become: true
+  apt: name={{ package }} state=present

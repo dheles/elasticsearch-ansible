@@ -139,11 +139,11 @@ galaxy_info:
   #  - wily
   #  - xenial
   #  - yakkety
-  #- name: Debian
-  #  versions:
+  - name: Debian
+    versions:
   #  - all
   #  - etch
-  #  - jessie
+    - jessie
   #  - lenny
   #  - sid
   #  - squeeze

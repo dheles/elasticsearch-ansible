@@ -1,2 +1,9 @@
 ---
-# defaults file for local.openJDK
+# use coloquial versions, e.g. 8
+# will get translated, e.g. java-1.8.0, as appropriate.
+# probably want to stick to
+java_version: 8
+
+# by default, install just the JRE.
+# override by setting jdk to true
+jdk: false

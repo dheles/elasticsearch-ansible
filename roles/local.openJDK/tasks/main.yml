@@ -1,4 +1,6 @@
 ---
-- name: install OpenJDK
-  become: true
-  yum: name=java-1.8.0-openjdk state=present
+- name: os-specific vars
+  include_vars: "{{ansible_os_family}}.yml"
+
+- name: install os-specific OpenJDK
+  include: "{{ansible_os_family}}.yml"
