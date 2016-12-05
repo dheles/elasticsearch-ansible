@@ -1,4 +1,64 @@
 ---
   - hosts: elasticsearch
+    become: true
+
+    vars:
+      # well, this is interesting... the elastic.co-provided ansible role for elasticsearch
+      # not only installs OpenJDK, rather than Oracle java
+      # but also Java 7, rather than 8 (on Debian).
+      # this is counter to what their docs recommend,
+      # but i think i'll roll with it for now, to see what will happen
+      # HOWEVER, since the role *does* install 8 on RedHat,
+      # this var has been moved to the os-specific var files
+      # - java_version: 7
+
+    # NOTE: will supposedly become unnecessary (someday):
+    # https://github.com/elastic/ansible-elasticsearch/issues/161
+    pre_tasks:
+      # alternately, consider http://docs.ansible.com/ansible/playbooks_best_practices.html#operating-system-and-distribution-variance
+      - name: include os-specific variables
+        include_vars: "{{ item }}"
+        with_first_found:
+          - "vars/{{ ansible_distribution }}.yml"
+          - "vars/{{ ansible_os_family }}.yml"
+          - "vars/defaults.yml"
+
+      - name: install prereqs
+        include: tasks/prereqs_{{ ansible_os_family }}.yml
+        when: ansible_os_family == 'RedHat' or ansible_os_family == 'Debian'
+
     roles:
-      - { role: local.openJDK } #, java_version: 7, jdk: true }
+      # - { role: java }
+      - { role: elasticsearch, es_instance_name: node1,
+        es_config: { }
+      } # es_java_install: false
+    vars:
+      es_version: "2.4.2"
+      # es_use_repository: false,
+      # es_custom_package_url: "https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/rpm/elasticsearch/2.4.2/elasticsearch-2.4.2.rpm"
+
+    tasks:
+      - name: get java version
+        shell: "java -version 2>&1"
+        register: java_version_result
+        failed_when: >
+          'OpenJDK' not in java_version_result.stdout or
+          '{{ java_version }}' not in java_version_result.stdout
+
+      - name: show java version
+        debug: var=java_version_result
+
+      - name: give it a sec (or 10)...
+        wait_for:
+          port: 9200
+          delay: 10
+
+      - name: get elasticsearch version
+        uri:
+          url: "http://localhost:9200"
+          return_content: yes
+        register: es_version_result
+        failed_when: "'{{es_version}}' not in es_version_result.json.version.number"
+
+      - name: show elasticsearch version
+        debug: var=es_version_result.json

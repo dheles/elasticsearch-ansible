@@ -55,6 +55,7 @@
   - name: add login user
     user:
       name: "{{ login_user }}"
+      shell: "/bin/bash"
     become: true
 
   # give login user sudo (carefully)...

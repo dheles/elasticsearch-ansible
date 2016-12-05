@@ -1,0 +1,3 @@
+---
+ssh_service: ssh
+java_version: 7

@@ -1,0 +1,5 @@
+---
+- name: instal EPEL repo
+  yum: name=epel-release state=present
+- name: install pip
+  yum: name=python-pip state=present enablerepo=epel

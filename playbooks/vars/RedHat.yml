@@ -1,2 +1,3 @@
-
+---
 ssh_service: sshd
+java_version: 8

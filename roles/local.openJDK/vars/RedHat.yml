@@ -1,2 +1,0 @@
----
-package: "java-1.{{ java_version }}.0-openjdk{% if jdk %}-devel{% endif %}"
