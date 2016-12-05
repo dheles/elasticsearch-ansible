@@ -1,0 +1,5 @@
+---
+- name: RedHat - install Kibana from url
+  yum:
+    name: "https://download.elastic.co/kibana/kibana/kibana-4.6.3-x86_64.rpm"
+    state: present

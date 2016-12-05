@@ -1,0 +1,18 @@
+---
+# tasks file for /Users/dheles/Source/Tutorials/ElasticSearch/roles/local.kibana
+- include: install-RedHat.yml
+  when: ansible_os_family == 'RedHat'
+
+- include: install-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+- name: install plugins
+  shell: "/opt/kibana/bin/kibana plugin --install {{item}}"
+  with_items:
+    - elastic/sense
+
+- name: Ensure Kibana is started and enabled at boot
+  service:
+    name: kibana
+    state: started
+    enabled: yes

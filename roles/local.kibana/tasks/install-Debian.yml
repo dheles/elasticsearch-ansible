@@ -1,0 +1,10 @@
+---
+- name: Debian - download Kibana from url
+  get_url:
+    url: "https://download.elastic.co/kibana/kibana/kibana-4.6.3-amd64.deb"
+    dest: /tmp/kibana-4.6.3-amd64.deb
+    validate_certs: no
+
+- name: Debian - install Kibana from url
+  apt:
+    deb: /tmp/kibana-4.6.3-amd64.deb

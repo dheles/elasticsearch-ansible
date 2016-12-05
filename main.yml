@@ -1,2 +1,3 @@
 ---
 - include: playbooks/elasticsearch.yml
+- include: playbooks/kibana.yml
