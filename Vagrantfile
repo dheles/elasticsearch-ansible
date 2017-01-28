@@ -7,7 +7,7 @@ domain          = "test.dev"
 setup_complete  = false
 
 # NOTE: currently using the same OS for all boxen
-OS="debian" # "debian" || "centos"
+OS="centos" # "debian" || "centos"
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
@@ -51,8 +51,14 @@ Vagrant.configure(2) do |config|
       end
 
       if setup_complete
+        if OS=="centos"
+          # workaround for https://github.com/mitchellh/vagrant/issues/8142
+          host.vm.provision "shell",
+            inline: "sudo service network restart"
+        end
+
         host.vm.provision "ansible" do |ansible|
-          # ansible.galaxy_role_file = "requirements.yml"
+          ansible.galaxy_role_file = "requirements.yml"
           ansible.inventory_path = "inventory/vagrant"
           ansible.playbook = "setup.yml"
           ansible.limit = "all"
