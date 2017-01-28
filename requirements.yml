@@ -2,8 +2,11 @@
 # REM: maunally install before using with
 # $ ansible-galaxy install -r requirements.yml
 
-- src: https://github.com/dheles/ansible-role-java
-  name: java
-  
+# - src: https://github.com/dheles/ansible-role-java
+#   name: java
+
 - src: https://github.com/elastic/ansible-elasticsearch
   name: elasticsearch
+
+- src: https://github.com/dheles/ansible-role-ruby
+  name: ruby

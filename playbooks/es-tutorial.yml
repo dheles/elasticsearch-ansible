@@ -1,0 +1,137 @@
+---
+  - hosts: elasticsearch
+    become: true
+
+    pre_tasks:
+       # NOTE: need epel before nodejs
+      - name: install epel repo
+        yum: name=epel-release state=present
+        when: ansible_os_family == 'RedHat'
+
+      - name: install prereqs - RedHat
+        yum: name={{ item }} state=present
+        with_items:
+          - git
+          - ruby-devel
+          - gcc
+          - sqlite-devel
+          - zlib-devel
+          - nodejs
+        when: ansible_os_family == 'RedHat'
+
+      - name: install prereqs - Debian
+        apt: name={{ item }} state=present
+        with_items:
+          - git
+          - ruby-dev
+          - build-essential
+          - libsqlite3-dev
+          - zlib1g-dev
+        when: ansible_os_family == 'Debian'
+
+      - name: add app user
+        user:
+          name: "{{ app_user }}"
+          shell: "/bin/bash"
+
+
+  - hosts: elasticsearch
+    become: true
+
+    roles:
+      - { role: ruby }
+
+    tasks:
+      - name: get es tutorial
+        git:
+          repo: "https://github.com/itay-grudev/es-tutorial"
+          dest: "{{ install_dir }}"
+        become: true
+
+      - file:
+          path: "{{ install_dir }}"
+          owner: "{{ app_user }}"
+          group: "{{ app_user }}"
+          state: directory
+          recurse: yes
+        become: true
+
+
+      # - name: make sure all extensions are properly built
+      #   command: "gem pristine --all"
+
+      # - name: install required gems
+      #   become: true
+      #   become_user: "{{ login_user }}"
+      #   gem:
+      #     name: "{{ item }}"
+      #     state: present
+      #     user_install: no
+      #   with_items:
+      #     # - foreman
+      #     - bundler
+
+      # - name: bundle install
+      #   # shell: bash -lc "bundle install"
+      #   # args:
+      #   #   chdir: "{{ install_dir }}"
+      #   bundler:
+      #     state: present
+      #     chdir: "{{ install_dir }}"
+
+  - hosts: elasticsearch
+    become: true
+    become_user: "{{ app_user }}"
+
+    tasks:
+      # - name: install bundler
+      #   gem:
+      #     name: bundler
+      #     state: present
+
+      # - name: test GEM_HOME - app_user
+      #   command: bash -lc "echo $GEM_HOME"
+      #   # args:
+      #   #   executable: /bin/bash
+      #
+      # - name: test PATH - command - app_user
+      #   command: bash -lc "echo $PATH"
+      #
+      # - name: test PATH - shell - app_user
+      #   shell: "echo $PATH"
+      #   args:
+      #     executable: /bin/bash
+
+      - name: install the project's gems for development
+        # become: true
+        # become_user: "{{ login_user }}"
+        bundler:
+          chdir: "{{ install_dir }}"
+          gem_path: "vendor/bundle"
+          # user_install: true
+          executable: "/usr/local/bin/bundle"
+
+      # - name: make sure all extensions are properly built
+      #   become: true
+      #   command: "gem pristine --all"
+      #   args:
+      #     chdir: "{{ install_dir }}"
+
+      # - name: bundle install
+      #   command: bash -lc "/usr/local/bin/bundle install"
+      #   args:
+      #     chdir: "{{ install_dir }}"
+          # executable: /bin/bash
+        # bundler:
+        #   state: present
+        #   chdir: "{{ install_dir }}"
+
+      - name: install schema
+        command: bash -lc "/usr/local/bin/bundle exec rake db:migrate"
+        args:
+          chdir: "{{ install_dir }}"
+
+      - name: index the test data
+        command: bash -lc "/usr/local/bin/bundle exec rake db:seed"
+        args:
+          chdir: "{{ install_dir }}"
