@@ -6,10 +6,16 @@
 - include: install-Debian.yml
   when: ansible_os_family == 'Debian'
 
+- name: check for installed plugins
+  shell: "/opt/kibana/bin/kibana plugin --list"
+  register: plugin_list
+
 - name: install plugins
-  shell: "/opt/kibana/bin/kibana plugin --install {{item}}"
+  shell: "/opt/kibana/bin/kibana plugin --install elastic/{{item}}"
+  when: "'{{ item }}' not in plugin_list.stdout"
   with_items:
-    - elastic/sense
+    - sense
+  changed_when: false
 
 - name: Ensure Kibana is started and enabled at boot
   service:
