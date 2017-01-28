@@ -29,9 +29,18 @@
 
     roles:
       # - { role: java }
+      # primary node
       - { role: elasticsearch, es_instance_name: node1,
         es_config: { }
       } # es_java_install: false
+      # failover node #1
+      # - { role: elasticsearch, es_instance_name: node2,
+      #   es_config: { }
+      # }
+      # failover node #2
+      # - { role: elasticsearch, es_instance_name: node3,
+      #   es_config: { }
+      # }
     vars:
       es_version: "2.4.2"
       # es_use_repository: false,
