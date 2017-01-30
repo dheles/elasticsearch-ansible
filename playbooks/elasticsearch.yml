@@ -2,7 +2,7 @@
   - hosts: elasticsearch
     become: true
 
-    vars:
+    # vars:
       # well, this is interesting... the elastic.co-provided ansible role for elasticsearch
       # not only installs OpenJDK, rather than Oracle java
       # but also Java 7, rather than 8 (on Debian).
@@ -28,11 +28,11 @@
         when: ansible_os_family == 'RedHat' or ansible_os_family == 'Debian'
 
     roles:
-      # - { role: java }
+      - { role: java }
       # primary node
       - { role: elasticsearch, es_instance_name: node1,
-        es_config: { }
-      } # es_java_install: false
+        es_config: { es_java_install: false }
+      }
       # failover node #1
       # - { role: elasticsearch, es_instance_name: node2,
       #   es_config: { }
@@ -42,7 +42,8 @@
       #   es_config: { }
       # }
     vars:
-      es_version: "2.4.2"
+      es_major_version: "2.x" # 2.x or 5.x
+      es_version:       "2.4.2" #latest: 2.4.2 or "5.1.2"
       # es_use_repository: false,
       # es_custom_package_url: "https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/rpm/elasticsearch/2.4.2/elasticsearch-2.4.2.rpm"
 
