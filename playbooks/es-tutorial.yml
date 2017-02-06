@@ -42,6 +42,12 @@
       - { role: ruby }
 
     tasks:
+      - name: remove the .keep file from the install directory
+        file:
+          path: "{{ install_dir }}/.keep"
+          state: absent
+        become: true
+
       - name: get es tutorial
         git:
           repo: "https://github.com/itay-grudev/es-tutorial"

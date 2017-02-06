@@ -63,6 +63,11 @@ Vagrant.configure(2) do |config|
           ansible.playbook = "setup.yml"
           ansible.limit = "all"
         end
+
+        # NOTE: nfs synced_folder is broken in vagrant 1.9.1.
+        # must downgrade to 1.9.0 for this to work
+        # https://github.com/mitchellh/vagrant/issues/8138
+        host.vm.synced_folder "project-code", "/opt/es-tutorial", type: 'nfs', mount_options: ['rw', 'vers=3', 'tcp', 'fsc' ,'actimeo=1'], map_uid: 0, map_gid: 0
       end
     end
   end
